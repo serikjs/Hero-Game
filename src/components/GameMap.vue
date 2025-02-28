@@ -8,7 +8,7 @@
           v-for="(tile, x) in row"
           :key="`tile-${x}-${y}`"
           class="tile"
-          :class="getTileClass(tile)"
+          :style="{ backgroundImage: `url(${tile.getDisplayData().backgroundImage})` }"
           @click="moveTo(x, y)"
       ></div>
     </template>
@@ -33,14 +33,10 @@ const processedTiles = ref(map.value.tiles);
 // Стили сетки
 const gridStyle = computed(() => ({
   display: 'grid',
-  gridTemplateColumns: `repeat(${map.value.width}, 50px)`,
-  gridTemplateRows: `repeat(${map.value.height}, 50px)`,
+  gridTemplateColumns: `repeat(${map.value.width}, 80px)`,
+  gridTemplateRows: `repeat(${map.value.height}, 80px)`,
   gap: '0',
 }));
-
-function getTileClass(tile:TileOptions) {
-  return tile.type;
-}
 
 // Логика перемещения и взаимодействия остается почти такой же
 function moveTo(x: number, y: number) {
@@ -96,12 +92,7 @@ function interactWithTile(x: number, y: number) {
   position: relative;
 }
 .tile {
-  width: 50px;
-  height: 50px;
+  border: 1px solid black;
+  background-size: cover;
 }
-.grass { background-color: green; }
-.tree { background-color: brown; }
-.door { background-color: gray; }
-.monster { background-color: red; }
-.treasure { background-color: yellow; }
 </style>

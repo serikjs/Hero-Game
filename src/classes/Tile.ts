@@ -1,4 +1,9 @@
-import type {TileOptions} from "@/typespaces/types/Tile.ts";
+import type {DisplayData, TileOptions} from "@/typespaces/types/Tile.ts";
+import grassImg from '@/assets/tiles/grass.png';
+
+const tileImages: Record<string, string> = {
+    grass: grassImg,
+};
 
 export class Tile {
     public type: string;
@@ -19,5 +24,11 @@ export class Tile {
     // Метод получения описания
     public getDescription(): string {
         return this.description || `Это ${this.type}`;
+    }
+
+    public getDisplayData(): DisplayData {
+        return {
+            backgroundImage: tileImages['grass'], // Фон для типа тайла
+        };
     }
 }
