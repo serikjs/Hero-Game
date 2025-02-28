@@ -1,26 +1,30 @@
-
-
 <template>
-<div class="player" :style="playerStyle">
-</div>
+  <div class="player" :style="playerStyle">
+  </div>
 </template>
 
 <script setup lang="ts">
-import type {Positions} from "@/typespaces/types/Positions.ts";
+import type {Positions, Size} from "@/typespaces/types/Positions.ts";
 import {computed, type CSSProperties} from "vue";
+import {TileSize} from "@/classes/Tile.ts";
 
-const props  = defineProps<{ position: Positions }>();
+const props = defineProps<{ position: Positions }>();
+
+const playerSize: Size = {
+  width: 50,
+  height: 65
+}
 
 const playerStyle = computed<CSSProperties>(() => ({
   position: 'absolute',
-  width: '50px',
-  height: '65px',
+  width: `${playerSize.width}px`,
+  height: `${playerSize.height}px`,
   backgroundImage: 'url(/Idle.png)',
-  backgroundSize: '50px 65px',
+  backgroundSize: `${playerSize.width}px ${playerSize.height}px`,
   backgroundPosition: '0 0',
 
-  left: `${props.position.x * 80}px`,
-  top: `${props.position.y * 80}px`,
+  left: `${props.position.x * TileSize.width + TileSize.width/2 - playerSize.width/2}px`,
+  top: `${props.position.y * TileSize.height + TileSize.height/2 - playerSize.height/2}px`,
   transition: 'all 0.2s ease',
 }));
 </script>
