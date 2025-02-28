@@ -10,7 +10,14 @@
           class="tile"
           :style="{ backgroundImage: `url(${tile.getDisplayData().backgroundImage})` }"
           @click="moveTo(x, y)"
-      ></div>
+      >
+        <img
+            v-if="tile.getDisplayData().icon"
+            :src="tile.getDisplayData().icon"
+            class="icon"
+            alt="icon"
+        />
+      </div>
     </template>
     <Player :position="playerPosition" />
   </div>

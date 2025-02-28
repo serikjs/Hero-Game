@@ -28,7 +28,7 @@ export class Tile {
 
     public getDisplayData(): DisplayData {
         return {
-            backgroundImage: tileImages['grass'], // Фон для типа тайла
+            backgroundImage: tileImages[this.type] || tileImages['grass'], // Фон для типа тайла
         };
     }
 }
