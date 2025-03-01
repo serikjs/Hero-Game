@@ -8,25 +8,25 @@ export class PlayerAdapter {
     private mapStore = useMapStore();
 
     // Перемещение персонажа
-    movePlayer(x: number, y: number): void {
+    async movePlayer(x: number, y: number): Promise<void> {
         const map = this.mapStore.currentMap;
         const player = this.playerStore.player;
         const result = player.moveTo(x, y, map);
         if (result) {
             // if (result.item) this.inventoryStore.addItem(result.item);
-            if (result.newLocation) this.handleLocationChange(result.newLocation);
+            if (result.newLocation) await this.handleLocationChange(result.newLocation);
         }
         this.setPlayer(player);
     }
 
     // Обработка нажатий клавиш
-    handleKey(event: KeyboardEvent): void {
+    async handleKey(event: KeyboardEvent): Promise<void>{
         const map = this.mapStore.currentMap;
         const player = this.playerStore.player;
         const result = player.handleKey(event, map);
         if (result) {
             // if (result.item) this.inventoryStore.addItem(result.item);
-            if (result.newLocation) this.handleLocationChange(result.newLocation);
+            if (result.newLocation) await this.handleLocationChange(result.newLocation);
         }
         this.setPlayer(player);
     }
