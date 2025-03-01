@@ -1,9 +1,11 @@
 import type {DisplayData, TileOptions} from "@/typespaces/types/Tile.ts";
 import grassImg from '@/assets/tiles/grass.png';
+import waterImg from '@/assets/tiles/water.webp';
 import type {Size} from "@/typespaces/types/Positions.ts";
 
 const tileImages: Record<string, string> = {
     grass: grassImg,
+    water: waterImg,
 };
 
 export const TileSize: Size = {height: 80, width:80};
