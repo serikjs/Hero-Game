@@ -29,14 +29,15 @@ import { forest1 } from "@/locations/forest_1.ts";
 import Player from "@/components/Player.vue";
 import {ThePlayer} from "@/classes/Player.ts";
 import {TileSize} from "@/classes/Tile.ts";
+import {Map} from "@/classes/Map.ts";
 
 // import { useGameStore } from '@/stores/game';
 
 // const game = useGameStore();
-const map = ref(forest1);
+const map = ref<Map>(forest1);
 const processedTiles = ref(map.value.tiles);
 
-const player = ref(new ThePlayer({ position: map.value.objects.startPosition }));
+const player = ref(new ThePlayer({ position: map.value.startPosition }));
 
 // Стили сетки
 const gridStyle = computed(() => ({

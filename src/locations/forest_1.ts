@@ -1,6 +1,7 @@
 import { Tile} from '@/classes/Tile.ts';
+import {Map} from "@/classes/Map.ts";
 
-export const forest1 = {
+export const forest1 = new Map({
     id: 'forest_1',
     name: 'Лесная поляна',
     width: 5,
@@ -12,7 +13,5 @@ export const forest1 = {
         [new Tile({ type: 'grass' }), new Tile({ type: 'grass' }),new Tile({ type: 'grass' }), new Tile({ type: 'grass' }), new Tile({ type: 'grass' })],
         [new Tile({ type: 'grass' }), new Tile({ type: 'grass' }),new Tile({ type: 'tree' }),new Tile({ type: 'grass' }), new Tile({ type: 'grass' })],
     ],
-    objects: {
-        startPosition: { x: 0, y: 0 },
-    },
-};
+    startPosition: { x: 0, y: 0 },
+});

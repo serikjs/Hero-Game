@@ -1,7 +1,6 @@
 import type {Positions} from "@/typespaces/types/Positions.ts";
 import type {PlayerOptions} from "@/typespaces/types/Player.ts";
-import type {Tile} from "@/classes/Tile.ts";
-import {createLogger} from "vite";
+import {Map} from "@/classes/Map.ts";
 
 export class ThePlayer {
     public position: Positions;
@@ -15,31 +14,25 @@ export class ThePlayer {
     }
 
     // Проверка валидности хода
-    public canMoveTo(x: number, y: number, map: { width: number; height: number; tiles: Tile[][] }): boolean {
-        const tile = map.tiles[y][x];
-
+    public canMoveTo(x: number, y: number, map: Map): boolean {
         const rezX =  x - this.position.x
         const rezY =  y - this.position.y
         return (
-            x >= 0 &&
-            x < map.width &&
-            y >= 0 &&
-            y < map.height &&
-            tile.passable &&
+            map.isPassable(x,y) &&
             Math.abs(rezX) <= 1 &&
             Math.abs(rezY) <= 1
         );
     }
 
     // Перемещение персонажа
-    public moveTo(x: number, y: number, map: { width: number; height: number; tiles: Tile[][] }): void {
+    public moveTo(x: number, y: number, map: Map): void {
         if (this.canMoveTo(x, y, map)) {
             this.position = { x, y };
             this.interactWithTile(x, y, map);
         }
     }
 
-    public handleKey(event: KeyboardEvent, map: { width: number; height: number; tiles: Tile[][] }): void {
+    public handleKey(event: KeyboardEvent, map: Map): void {
         const { x, y } = this.position;
         switch (event.key) {
             case 'ArrowUp':
@@ -62,9 +55,9 @@ export class ThePlayer {
     }
 
     // Взаимодействие с тайлом
-    public interactWithTile(x: number, y: number, map: { tiles: Tile[][] }): void {
-        const tile = map.tiles[y][x];
-        if (tile.canInteract()) {
+    public interactWithTile(x: number, y: number, map: Map): void {
+        const tile = map.getTile(x, y);
+        if (tile && tile.canInteract()) {
             // if (tile instanceof Treasure) {
             //     console.log(`Подобрано: ${tile.item}`);
             //     map.tiles[y][x] = new Tile(); // Убираем сокровище
