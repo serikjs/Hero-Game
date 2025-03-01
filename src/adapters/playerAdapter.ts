@@ -12,10 +12,10 @@ export class PlayerAdapter {
         const map = this.mapStore.currentMap;
         const player = this.playerStore.player;
         const result = player.moveTo(x, y, map);
-        // if (result) {
+        if (result) {
             // if (result.item) this.inventoryStore.addItem(result.item);
-            // if (result.newLocation) this.handleLocationChange(result.newLocation);
-        // }
+            if (result.newLocation) this.handleLocationChange(result.newLocation);
+        }
         this.setPlayer(player);
     }
 
@@ -24,10 +24,10 @@ export class PlayerAdapter {
         const map = this.mapStore.currentMap;
         const player = this.playerStore.player;
         const result = player.handleKey(event, map);
-        // if (result) {
+        if (result) {
             // if (result.item) this.inventoryStore.addItem(result.item);
-            // if (result.newLocation) this.handleLocationChange(result.newLocation);
-        // }
+            if (result.newLocation) this.handleLocationChange(result.newLocation);
+        }
         this.setPlayer(player);
     }
 
@@ -42,8 +42,22 @@ export class PlayerAdapter {
     }
 
     // Заглушка для смены локации
-    // private handleLocationChange(locationId: string): void {
-    //     console.log(`Переход в ${locationId}`);
-    //     // Здесь можно будет загрузить новую карту и обновить mapStore
-    // }
+    private async handleLocationChange(locationId: string): Promise<void> {
+        console.log(`Переход в ${locationId}`);
+        try {
+            const module = await import(`@/locations/${locationId}.ts`);
+            // Предполагаем, что экспорт назван в стиле camelCase (forest2, cave1 и т.д.)
+            const newMap = module[locationId.replace('_', '')] as Map;
+            if (newMap) {
+                this.mapStore.setMap(newMap);
+                const player = this.playerStore.player;
+                player.position = newMap.startPosition;
+                this.playerStore.setPlayer(player);
+            } else {
+                console.error(`Карта с ID ${locationId} не найдена`);
+            }
+        } catch (error) {
+            console.error(`Ошибка загрузки карты ${locationId}:`, error);
+        }
+    }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="map" :style="gridStyle">
     <template
-        v-for="(row, y) in processedTiles"
+        v-for="(row, y) in mapService.getMap().tiles"
         :key="y"
     >
       <div
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted, onUnmounted} from 'vue';
+import { computed, onMounted, onUnmounted} from 'vue';
 import Player from "@/components/Player.vue";
 import {TileSize} from "@/classes/Tile.ts";
 import {PlayerAdapter} from "@/adapters/playerAdapter.ts";
@@ -35,7 +35,6 @@ import {MapAdapter} from "@/adapters/mapAdapter.ts";
 // const game = useGameStore();
 const mapService = new MapAdapter();
 const playerService = new PlayerAdapter();
-const processedTiles = ref(mapService.getMap().tiles);
 
 // Стили сетки
 const gridStyle = computed(() => ({

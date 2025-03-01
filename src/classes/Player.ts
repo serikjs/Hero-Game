@@ -1,6 +1,7 @@
 import type {Positions} from "@/typespaces/types/Positions.ts";
 import type {PlayerOptions} from "@/typespaces/types/Player.ts";
 import {Map} from "@/classes/Map.ts";
+import {Door} from "@/classes/Door.ts";
 
 export class ThePlayer {
     public position: Positions;
@@ -57,13 +58,9 @@ export class ThePlayer {
     public interactWithTile(x: number, y: number, map: Map): { item?: string; newLocation?: string } | null {
         const tile = map.getTile(x, y);
         if (tile && tile.canInteract()) {
-            // if (tile instanceof Treasure) {
-            //     console.log(`Подобрано: ${tile.item}`);
-            //     map.tiles[y][x] = new Tile(); // Убираем сокровище
-            // } else if (tile instanceof Door) {
-            //     console.log(`Переход в ${tile.to}`);
-            //     // Логика перехода на новую локацию может быть добавлена позже
-            // }
+            if (tile instanceof Door) {
+                return { newLocation: tile.to };
+            }
         }
         return null
     }
