@@ -9,7 +9,7 @@
           :key="`tile-${x}-${y}`"
           class="tile"
           :style="{ backgroundImage: `url(${tile.getDisplayData().backgroundImage})` }"
-          @click="player.moveTo(x, y, map)"
+          @click="playerService.movePlayer(x, y)"
       >
         <img
             v-if="tile.getDisplayData().icon"
@@ -19,36 +19,34 @@
         />
       </div>
     </template>
-    <Player :position="player.position" :player="player" />
+    <Player :position="playerService.getPlayer().position"/>
   </div>
 </template>
 
 <script setup lang="ts">
 import {ref, computed, onMounted, onUnmounted} from 'vue';
-import { forest1 } from "@/locations/forest_1.ts";
 import Player from "@/components/Player.vue";
-import {ThePlayer} from "@/classes/Player.ts";
 import {TileSize} from "@/classes/Tile.ts";
-import {Map} from "@/classes/Map.ts";
+import {PlayerAdapter} from "@/adapters/playerAdapter.ts";
+import {MapAdapter} from "@/adapters/mapAdapter.ts";
 
 // import { useGameStore } from '@/stores/game';
 
 // const game = useGameStore();
-const map = ref<Map>(forest1);
-const processedTiles = ref(map.value.tiles);
-
-const player = ref(new ThePlayer({ position: map.value.startPosition }));
+const mapService = new MapAdapter();
+const playerService = new PlayerAdapter();
+const processedTiles = ref(mapService.getMap().tiles);
 
 // Стили сетки
 const gridStyle = computed(() => ({
   display: 'grid',
-  gridTemplateColumns: `repeat(${map.value.width}, ${TileSize.width}px)`,
-  gridTemplateRows: `repeat(${map.value.height}, ${TileSize.height}px)`,
+  gridTemplateColumns: `repeat(${mapService.getMap().width}, ${TileSize.width}px)`,
+  gridTemplateRows: `repeat(${mapService.getMap().height}, ${TileSize.height}px)`,
   gap: '0',
 }));
 
 function handleKey(event: KeyboardEvent) {
-  player.value.handleKey(event, map.value);
+  playerService.handleKey(event);
 }
 
 onMounted(() => window.addEventListener('keydown', handleKey));

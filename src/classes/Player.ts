@@ -25,37 +25,36 @@ export class ThePlayer {
     }
 
     // Перемещение персонажа
-    public moveTo(x: number, y: number, map: Map): void {
+    public moveTo(x: number, y: number, map: Map): { item?: string; newLocation?: string } | null {
         if (this.canMoveTo(x, y, map)) {
             this.position = { x, y };
-            this.interactWithTile(x, y, map);
+            return this.interactWithTile(x, y, map);
         }
+        return null;
     }
 
-    public handleKey(event: KeyboardEvent, map: Map): void {
+    public handleKey(event: KeyboardEvent, map: Map): { item?: string; newLocation?: string } | null {
         const { x, y } = this.position;
         switch (event.key) {
             case 'ArrowUp':
             case 'w':
-                this.moveTo(x, y - 1, map);
-                break;
+                return this.moveTo(x, y - 1, map);
             case 'ArrowDown':
             case 's':
-                this.moveTo(x, y + 1, map);
-                break;
+                return this.moveTo(x, y + 1, map);
             case 'ArrowLeft':
             case 'a':
-                this.moveTo(x - 1, y, map);
-                break;
+                return this.moveTo(x - 1, y, map);
             case 'ArrowRight':
             case 'd':
-                this.moveTo(x + 1, y, map);
-                break;
+                return this.moveTo(x + 1, y, map);
+            default:
+                return null;
         }
     }
 
     // Взаимодействие с тайлом
-    public interactWithTile(x: number, y: number, map: Map): void {
+    public interactWithTile(x: number, y: number, map: Map): { item?: string; newLocation?: string } | null {
         const tile = map.getTile(x, y);
         if (tile && tile.canInteract()) {
             // if (tile instanceof Treasure) {
@@ -66,6 +65,7 @@ export class ThePlayer {
             //     // Логика перехода на новую локацию может быть добавлена позже
             // }
         }
+        return null
     }
 
     // function fightMonster(monster, x, y) {
