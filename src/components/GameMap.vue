@@ -19,12 +19,12 @@
         />
       </div>
     </template>
-    <Player :position="player.position" />
+    <Player :position="player.position" :player="player" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import {ref, computed, onMounted, onUnmounted} from 'vue';
 import { forest1 } from "@/locations/forest_1.ts";
 import Player from "@/components/Player.vue";
 import {ThePlayer} from "@/classes/Player.ts";
@@ -45,6 +45,13 @@ const gridStyle = computed(() => ({
   gridTemplateRows: `repeat(${map.value.height}, ${TileSize.height}px)`,
   gap: '0',
 }));
+
+function handleKey(event: KeyboardEvent) {
+  player.value.handleKey(event, map.value);
+}
+
+onMounted(() => window.addEventListener('keydown', handleKey));
+onUnmounted(() => window.removeEventListener('keydown', handleKey));
 
 </script>
 

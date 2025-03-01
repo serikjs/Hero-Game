@@ -1,6 +1,7 @@
 import type {Positions} from "@/typespaces/types/Positions.ts";
 import type {PlayerOptions} from "@/typespaces/types/Player.ts";
 import type {Tile} from "@/classes/Tile.ts";
+import {createLogger} from "vite";
 
 export class ThePlayer {
     public position: Positions;
@@ -35,6 +36,28 @@ export class ThePlayer {
         if (this.canMoveTo(x, y, map)) {
             this.position = { x, y };
             this.interactWithTile(x, y, map);
+        }
+    }
+
+    public handleKey(event: KeyboardEvent, map: { width: number; height: number; tiles: Tile[][] }): void {
+        const { x, y } = this.position;
+        switch (event.key) {
+            case 'ArrowUp':
+            case 'w':
+                this.moveTo(x, y - 1, map);
+                break;
+            case 'ArrowDown':
+            case 's':
+                this.moveTo(x, y + 1, map);
+                break;
+            case 'ArrowLeft':
+            case 'a':
+                this.moveTo(x - 1, y, map);
+                break;
+            case 'ArrowRight':
+            case 'd':
+                this.moveTo(x + 1, y, map);
+                break;
         }
     }
 
