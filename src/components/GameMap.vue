@@ -58,7 +58,11 @@ onUnmounted(() => window.removeEventListener('keydown', handleKey));
   position: relative;
 }
 .tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid black;
   background-size: cover;
 }
+
 </style>

@@ -7,6 +7,7 @@
 import type {Positions, Size} from "@/typespaces/types/Positions.ts";
 import {computed, type CSSProperties} from "vue";
 import {TileSize} from "@/classes/Tile.ts";
+import playerImage from '@/assets/player.png';
 
 const props = defineProps<{ position: Positions }>();
 
@@ -19,7 +20,7 @@ const playerStyle = computed<CSSProperties>(() => ({
   position: 'absolute',
   width: `${playerSize.width}px`,
   height: `${playerSize.height}px`,
-  backgroundImage: 'url(/Idle.png)',
+  backgroundImage: `url(${playerImage})`,
   backgroundSize: `${playerSize.width}px ${playerSize.height}px`,
   backgroundPosition: '0 0',
 

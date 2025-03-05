@@ -3,7 +3,7 @@ import grassImg from '@/assets/tiles/grass.png';
 import waterImg from '@/assets/tiles/water.webp';
 import type {Size} from "@/typespaces/types/Positions.ts";
 
-const tileImages: Record<string, string> = {
+export const tileImages: Record<string, string> = {
     grass: grassImg,
     water: waterImg,
 };
