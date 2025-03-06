@@ -3,7 +3,7 @@ import { useMapStore } from '@/store/MapStore';
 import { ThePlayer } from '@/classes/Player.ts';
 import { Map } from '@/classes/Map.ts';
 import {Tile} from "@/classes/Tile.ts";
-import {FightService} from "@/adapters/fightAdapter.ts";
+import {FightAdapter} from "@/adapters/fightAdapter.ts";
 import {useFightStore} from "@/store/fightStore.ts";
 
 export class PlayerAdapter {
@@ -20,7 +20,7 @@ export class PlayerAdapter {
 
     // Получение персонажа
     getPlayer(): ThePlayer {
-        return this.playerStore.player;
+        return this.playerStore.getPlayer;
     }
 
     // Обновление персонажа
@@ -31,18 +31,18 @@ export class PlayerAdapter {
 
 
     async movePlayer(x: number, y: number): Promise<void> {
-        if (!this.fightStore.getIsFighting()) {
-            const map = this.mapStore.currentMap;
-            const player = this.playerStore.player;
+        if (!this.fightStore.getIsFighting) {
+            const map = this.mapStore.getCurrentMap;
+            const player = this.playerStore.getPlayer;
             const result = player.moveTo(x, y, map);
 
             if (result) {
                 if (result.newLocation) await this.handleLocationChange(result.newLocation);
                 // if (result.item) this.inventoryStore.addItem(result.item);
                 if(result.monster && result.monster.hp > 0){
-                    const fightService = new FightService(player, result.monster);
+                    const fightAdapter = new FightAdapter(player, result.monster);
                     this.fightStore.startFight(result.monster);
-                    const fightResult = await fightService.startFight(this.fightModal);
+                    const fightResult = await fightAdapter.startFight(this.fightModal);
                     if (fightResult.winner === 'player') {
                         // if (fightResult.loot) this.inventoryStore.addItem(fightResult.loot);
                         map.setTile(x, y, new Tile());
@@ -58,8 +58,8 @@ export class PlayerAdapter {
 
     // Обработка клавиш
     private async handleKey(event: KeyboardEvent): Promise<void> {
-        if (!this.fightStore.getIsFighting()) {
-            const player = this.playerStore.player;
+        if (!this.fightStore.getIsFighting) {
+            const player = this.playerStore.getPlayer;
             const { x, y } = player.position;
             let newX = x;
             let newY = y;
@@ -105,7 +105,7 @@ export class PlayerAdapter {
             const newMap = module[locationId.replace('_', '')] as Map;
             if (newMap) {
                 this.mapStore.setMap(newMap);
-                const player = this.playerStore.player;
+                const player = this.playerStore.getPlayer;
                 player.position = newMap.startPosition;
                 this.playerStore.setPlayer(player);
             } else {

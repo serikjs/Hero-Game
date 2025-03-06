@@ -7,7 +7,7 @@ export class MapAdapter {
 
     // Получение текущей карты
     getMap(): Map {
-        return this.mapStore.currentMap;
+        return this.mapStore.getCurrentMap;
     }
 
     // Установка новой карты
@@ -17,6 +17,6 @@ export class MapAdapter {
 
     // Обновление тайла на карте
     updateTile(x: number, y: number, tile: Tile): void {
-        this.mapStore.currentMap.setTile(x, y, tile);
+        this.mapStore.getCurrentMap.setTile(x, y, tile);
     }
 }

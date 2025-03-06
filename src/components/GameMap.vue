@@ -1,7 +1,7 @@
 <template>
   <div class="map" :style="gridStyle">
     <template
-        v-for="(row, y) in mapService.getMap().tiles"
+        v-for="(row, y) in mapAdapter.getMap().tiles"
         :key="y"
     >
       <div
@@ -9,7 +9,7 @@
           :key="`tile-${x}-${y}`"
           class="tile"
           :style="{ backgroundImage: `url(${tile.getDisplayData().backgroundImage})` }"
-          @click="playerService.movePlayer(x, y)"
+          @click="playerAdapter.movePlayer(x, y)"
       >
         <img
             v-if="tile.getDisplayData().icon"
@@ -19,13 +19,13 @@
         />
       </div>
     </template>
-    <Player :position="playerService.getPlayer().position"/>
+    <Player :position="playerAdapter.getPlayer().position"/>
     <FightModal
-        :is-visible="fightStore.getIsFighting()"
-        :player-hp="playerService.getPlayer().hp"
-        :monster-hp="fightStore.currentMonsterHp()"
-        :monster-icon="fightStore.currentMonsterIcon()"
-        @close="fightStore.endFight(fightStore.getFightResult()!)"
+        :is-visible="fightStore.getIsFighting"
+        :player-hp="playerAdapter.getPlayer().hp"
+        :monster-hp="fightStore.currentMonsterHp"
+        :monster-icon="fightStore.currentMonsterIcon"
+        @close="fightStore.endFight()"
         ref="fightModal"
     />
   </div>
@@ -40,25 +40,22 @@ import {MapAdapter} from "@/adapters/mapAdapter.ts";
 import FightModal from "@/components/FightModal.vue";
 import {useFightStore} from "@/store/fightStore.ts";
 
-// import { useGameStore } from '@/stores/game';
-
-// const game = useGameStore();
-const mapService = new MapAdapter();
-const playerService = new PlayerAdapter();
+const mapAdapter = new MapAdapter();
+const playerAdapter = new PlayerAdapter();
 const fightStore = useFightStore();
 const fightModal = ref<InstanceType<typeof FightModal> | null>(null);
 
 // Стили сетки
 const gridStyle = computed(() => ({
   display: 'grid',
-  gridTemplateColumns: `repeat(${mapService.getMap().width}, ${TileSize.width}px)`,
-  gridTemplateRows: `repeat(${mapService.getMap().height}, ${TileSize.height}px)`,
+  gridTemplateColumns: `repeat(${mapAdapter.getMap().width}, ${TileSize.width}px)`,
+  gridTemplateRows: `repeat(${mapAdapter.getMap().height}, ${TileSize.height}px)`,
   gap: '0',
 }));
 
 
 onMounted(() => {
-  playerService.initialize(fightModal.value);
+  playerAdapter.initialize(fightModal.value);
 });
 </script>
 

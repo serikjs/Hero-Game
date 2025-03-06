@@ -2,7 +2,7 @@ import { ThePlayer } from '@/classes/Player.ts';
 
 import { Monster } from '@/classes/Monster.ts';
 
-export class FightService {
+export class FightAdapter {
     private player: ThePlayer;
     private monster: Monster;
     private resolveFight: ((result: { winner: 'player' | 'monster'; loot?: string }) => void) | null = null;
