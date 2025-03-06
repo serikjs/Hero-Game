@@ -2,6 +2,7 @@ import type {Positions} from "@/typespaces/types/Positions.ts";
 import type {PlayerOptions} from "@/typespaces/types/Player.ts";
 import {Map} from "@/classes/Map.ts";
 import {Door} from "@/classes/Door.ts";
+import {Monster} from "@/classes/Monster.ts";
 
 export class ThePlayer {
     public position: Positions;
@@ -26,7 +27,7 @@ export class ThePlayer {
     }
 
     // Перемещение персонажа
-    public moveTo(x: number, y: number, map: Map): { item?: string; newLocation?: string } | null {
+    public moveTo(x: number, y: number, map: Map): { item?: string; newLocation?: string;monster?:Monster  } | null {
         if (this.canMoveTo(x, y, map)) {
             this.position = { x, y };
             return this.interactWithTile(x, y, map);
@@ -34,43 +35,34 @@ export class ThePlayer {
         return null;
     }
 
-    public handleKey(event: KeyboardEvent, map: Map): { item?: string; newLocation?: string } | null {
-        const { x, y } = this.position;
-        switch (event.key) {
-            case 'ArrowUp':
-            case 'w':
-                return this.moveTo(x, y - 1, map);
-            case 'ArrowDown':
-            case 's':
-                return this.moveTo(x, y + 1, map);
-            case 'ArrowLeft':
-            case 'a':
-                return this.moveTo(x - 1, y, map);
-            case 'ArrowRight':
-            case 'd':
-                return this.moveTo(x + 1, y, map);
-            default:
-                return null;
-        }
-    }
-
     // Взаимодействие с тайлом
-    public interactWithTile(x: number, y: number, map: Map): { item?: string; newLocation?: string } | null {
+    public interactWithTile(x: number, y: number, map: Map): { item?: string; newLocation?: string;monster?:Monster  } | null {
         const tile = map.getTile(x, y);
         if (tile && tile.canInteract()) {
             if (tile instanceof Door) {
                 return { newLocation: tile.to };
             }
+            if (tile instanceof Monster) {
+                return { monster: tile };
+            }
         }
         return null
     }
 
-    // function fightMonster(monster, x, y) {
-    //   monster.takeDamage(game.player.attack);
-    //   if (monster.hp <= 0) {
-    //     const loot = monster.die();
-    //     if (loot) game.pickupItem(loot);
-    //     map.value.tiles[y][x] = new Tile();
-    //   }
-    // }
+    // Нанести урон
+    public dealDamage(): number {
+        return this.attack;
+    }
+
+
+    // Получить урон
+    public takeDamage(damage: number): void {
+        this.hp -= damage;
+        if (this.hp < 0) this.hp = 0;
+    }
+
+    // Смерть
+    public die(): boolean {
+        return this.hp <= 0;
+    }
 }

@@ -8,7 +8,7 @@ export abstract class Monster extends Tile {
     public attack: number;
     public loot: string | null;
 
-    constructor({ type = 'generic', hp = 10, attack = 5, loot = null }: MonsterOptions = {}) {
+    protected constructor({ type = 'generic', hp = 10, attack = 5, loot = null }: MonsterOptions = {}) {
         super({ type: 'grass', passable: true, description: `Монстр: ${type}` }); // Монстры стоят на траве
         this.monsterType = type;
         this.hp = hp;
@@ -16,14 +16,22 @@ export abstract class Monster extends Tile {
         this.loot = loot;
     }
 
-    public takeDamage(damage: number): string | null {
+    public takeDamage(damage: number): {isDie:boolean, loot: string | null} | null{
         this.hp -= damage;
         if (this.hp <= 0) return this.die();
         return null;
     }
 
-    public die(): string | null {
-        return this.loot;
+    // Нанести урон
+    public dealDamage(): number {
+        return this.attack;
+    }
+
+    public die(): {isDie:boolean, loot: string | null} {
+        return {
+            isDie: this.hp <= 0,
+            loot: this.loot,
+        }
     }
 
     public canInteract(): boolean {

@@ -2,33 +2,20 @@ import { usePlayerStore } from '@/store/PlayerStore';
 import { useMapStore } from '@/store/MapStore';
 import { ThePlayer } from '@/classes/Player.ts';
 import { Map } from '@/classes/Map.ts';
+import {Tile} from "@/classes/Tile.ts";
+import {FightService} from "@/adapters/fightAdapter.ts";
+import {useFightStore} from "@/store/fightStore.ts";
 
 export class PlayerAdapter {
     private playerStore = usePlayerStore();
     private mapStore = useMapStore();
+    private fightStore = useFightStore();
+    private fightModal: any = null;
 
-    // Перемещение персонажа
-    async movePlayer(x: number, y: number): Promise<void> {
-        const map = this.mapStore.currentMap;
-        const player = this.playerStore.player;
-        const result = player.moveTo(x, y, map);
-        if (result) {
-            // if (result.item) this.inventoryStore.addItem(result.item);
-            if (result.newLocation) await this.handleLocationChange(result.newLocation);
-        }
-        this.setPlayer(player);
-    }
-
-    // Обработка нажатий клавиш
-    async handleKey(event: KeyboardEvent): Promise<void>{
-        const map = this.mapStore.currentMap;
-        const player = this.playerStore.player;
-        const result = player.handleKey(event, map);
-        if (result) {
-            // if (result.item) this.inventoryStore.addItem(result.item);
-            if (result.newLocation) await this.handleLocationChange(result.newLocation);
-        }
-        this.setPlayer(player);
+    // Инициализация сервиса с модалкой
+    initialize(fightModal: any) {
+        this.fightModal = fightModal;
+        this.startKeyListener();
     }
 
     // Получение персонажа
@@ -39,6 +26,74 @@ export class PlayerAdapter {
     // Обновление персонажа
     setPlayer(player: ThePlayer): void {
         this.playerStore.setPlayer(player);
+    }
+
+
+
+    async movePlayer(x: number, y: number): Promise<void> {
+        if (!this.fightStore.getIsFighting()) {
+            const map = this.mapStore.currentMap;
+            const player = this.playerStore.player;
+            const result = player.moveTo(x, y, map);
+
+            if (result) {
+                if (result.newLocation) await this.handleLocationChange(result.newLocation);
+                // if (result.item) this.inventoryStore.addItem(result.item);
+                if(result.monster && result.monster.hp > 0){
+                    const fightService = new FightService(player, result.monster);
+                    this.fightStore.startFight(result.monster);
+                    const fightResult = await fightService.startFight(this.fightModal);
+                    if (fightResult.winner === 'player') {
+                        // if (fightResult.loot) this.inventoryStore.addItem(fightResult.loot);
+                        map.setTile(x, y, new Tile());
+                        this.fightStore.setFightResult('Монстр побеждён!');
+                    }else {
+                        this.fightStore.setFightResult('Вы проиграли!');
+                    }
+                }
+            }
+            this.setPlayer(player);
+        }
+    }
+
+    // Обработка клавиш
+    private async handleKey(event: KeyboardEvent): Promise<void> {
+        if (!this.fightStore.getIsFighting()) {
+            const player = this.playerStore.player;
+            const { x, y } = player.position;
+            let newX = x;
+            let newY = y;
+
+            switch (event.key) {
+                case 'ArrowUp':
+                case 'w':
+                    newY = y - 1;
+                    break;
+                case 'ArrowDown':
+                case 's':
+                    newY = y + 1;
+                    break;
+                case 'ArrowLeft':
+                case 'a':
+                    newX = x - 1;
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                    newX = x + 1;
+                    break;
+                default:
+                    return;
+            }
+
+            await this.movePlayer(newX, newY);
+        }
+    }
+
+    // Запуск слушателя клавиш
+    private startKeyListener() {
+        const handleKeyBound = (event: KeyboardEvent) => this.handleKey(event);
+        window.addEventListener('keydown', handleKeyBound);
+        return () => window.removeEventListener('keydown', handleKeyBound);
     }
 
     // Заглушка для смены локации
