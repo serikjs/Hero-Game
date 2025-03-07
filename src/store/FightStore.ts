@@ -1,4 +1,4 @@
-// src/stores/fightStore.ts
+// src/stores/FightStore.ts
 import { defineStore } from 'pinia';
 import {computed, ref} from 'vue';
 import { Monster } from '@/classes/Monster.ts';

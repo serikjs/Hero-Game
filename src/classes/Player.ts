@@ -3,11 +3,14 @@ import type {PlayerOptions} from "@/typespaces/types/Player.ts";
 import {Map} from "@/classes/Map.ts";
 import {Door} from "@/classes/Door.ts";
 import {Monster} from "@/classes/Monster.ts";
+import type {Item} from "@/typespaces/types/ItemInventory.ts";
+import {useInventoryStore} from "@/store/InventoryStore.ts";
 
 export class ThePlayer {
     public position: Positions;
     public attack: number;
     public hp: number;
+    private inventory: Item[]  = useInventoryStore().getItems;
 
     constructor({position, attack = 10, hp = 100}: PlayerOptions) {
         this.position = position;
@@ -48,6 +51,11 @@ export class ThePlayer {
         }
         return null
     }
+
+    public getInventory():Item[]{
+        return this.inventory;
+    }
+
 
     // Нанести урон
     public dealDamage(): number {

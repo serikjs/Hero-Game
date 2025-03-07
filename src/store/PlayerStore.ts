@@ -16,6 +16,7 @@ export const usePlayerStore = defineStore('player', () => {
 
 
     return {
+        player,
         getPlayer,
         setPlayer,
     };

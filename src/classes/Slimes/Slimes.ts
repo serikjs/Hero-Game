@@ -10,7 +10,7 @@ export class Slime extends Monster {
             type: 'goblin',
             hp: options.hp ?? 10,
             attack: options.attack ?? 5,
-            loot: options.loot ?? 'gold_coin',
+            lootTable: options.lootTable ?? [],
         });
     }
 }
@@ -20,7 +20,7 @@ export class SlimeBlue extends Slime {
         super({
             hp: options.hp ?? 15, // Больше здоровья
             attack: options.attack ?? 8, // Сильнее атака
-            loot: options.loot ?? null,
+            lootTable: options.lootTable ?? [],
         });
     }
 

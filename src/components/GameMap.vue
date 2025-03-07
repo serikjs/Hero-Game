@@ -28,6 +28,14 @@
         @close="fightStore.endFight()"
         ref="fightModal"
     />
+    <div class="inventory">
+      <h3>Инвентарь</h3>
+      <ul>
+        <li v-for="item in playerAdapter.getPlayer().getInventory()" :key="item.id">
+          {{ item.name }} ({{ item.type }}) {{ item.quantity && item.quantity > 1 ? `x${item.quantity}` : '' }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -38,7 +46,7 @@ import {TileSize} from "@/classes/Tile.ts";
 import {PlayerAdapter} from "@/adapters/playerAdapter.ts";
 import {MapAdapter} from "@/adapters/mapAdapter.ts";
 import FightModal from "@/components/FightModal.vue";
-import {useFightStore} from "@/store/fightStore.ts";
+import {useFightStore} from "@/store/FightStore.ts";
 
 const mapAdapter = new MapAdapter();
 const playerAdapter = new PlayerAdapter();

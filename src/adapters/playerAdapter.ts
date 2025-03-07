@@ -4,11 +4,13 @@ import { ThePlayer } from '@/classes/Player.ts';
 import { Map } from '@/classes/Map.ts';
 import {Tile} from "@/classes/Tile.ts";
 import {FightAdapter} from "@/adapters/fightAdapter.ts";
-import {useFightStore} from "@/store/fightStore.ts";
+import {useFightStore} from "@/store/FightStore.ts";
+import {useInventoryStore} from "@/store/InventoryStore.ts";
 
 export class PlayerAdapter {
     private playerStore = usePlayerStore();
     private mapStore = useMapStore();
+    private inventoryStore = useInventoryStore();
     private fightStore = useFightStore();
     private fightModal: any = null;
 
@@ -20,7 +22,7 @@ export class PlayerAdapter {
 
     // Получение персонажа
     getPlayer(): ThePlayer {
-        return this.playerStore.getPlayer;
+        return <ThePlayer>this.playerStore.getPlayer;
     }
 
     // Обновление персонажа
@@ -29,11 +31,10 @@ export class PlayerAdapter {
     }
 
 
-
     async movePlayer(x: number, y: number): Promise<void> {
         if (!this.fightStore.getIsFighting) {
             const map = this.mapStore.getCurrentMap;
-            const player = this.playerStore.getPlayer;
+            const player = this.getPlayer();
             const result = player.moveTo(x, y, map);
 
             if (result) {
@@ -44,7 +45,7 @@ export class PlayerAdapter {
                     this.fightStore.startFight(result.monster);
                     const fightResult = await fightAdapter.startFight(this.fightModal);
                     if (fightResult.winner === 'player') {
-                        // if (fightResult.loot) this.inventoryStore.addItem(fightResult.loot);
+                        if (fightResult.loot) this.inventoryStore.addItem(fightResult.loot);
                         map.setTile(x, y, new Tile());
                         this.fightStore.setFightResult('Монстр побеждён!');
                     }else {
@@ -59,7 +60,7 @@ export class PlayerAdapter {
     // Обработка клавиш
     private async handleKey(event: KeyboardEvent): Promise<void> {
         if (!this.fightStore.getIsFighting) {
-            const player = this.playerStore.getPlayer;
+            const player = this.getPlayer();
             const { x, y } = player.position;
             let newX = x;
             let newY = y;
@@ -105,7 +106,7 @@ export class PlayerAdapter {
             const newMap = module[locationId.replace('_', '')] as Map;
             if (newMap) {
                 this.mapStore.setMap(newMap);
-                const player = this.playerStore.getPlayer;
+                const player = this.getPlayer();
                 player.position = newMap.startPosition;
                 this.playerStore.setPlayer(player);
             } else {
