@@ -2,11 +2,13 @@ import { ThePlayer } from '@/classes/Player.ts';
 
 import { Monster } from '@/classes/Monster.ts';
 import type {InventoryItem} from "@/classes/InventoryItem.ts";
+import {useFightStore} from "@/store/FightStore.ts";
 
 export class FightAdapter {
     private player: ThePlayer;
     private monster: Monster;
     private resolveFight: ((result: { winner: 'player' | 'monster'; loot?: InventoryItem }) => void) | null = null;
+    private fightStore = useFightStore();
 
     constructor(player: ThePlayer, monster: Monster) {
         this.player = player;
@@ -33,7 +35,7 @@ export class FightAdapter {
 
 
             if (this.monster.die().isDie) {
-                modal.setResult('Монстр побеждён!');
+                this.fightStore.setFightResult('Монстр побеждён!');
                 if(loot?.loot){
                     this.resolveFight?.({ winner: 'player', loot: loot.loot });
                 }else{
@@ -50,7 +52,7 @@ export class FightAdapter {
             await new Promise((r) => setTimeout(r, 500)); // Задержка для анимации
 
             if (this.player.die()) {
-                modal.setResult('Вы проиграли!');
+                this.fightStore.setFightResult('Вы проиграли!');
                 this.resolveFight?.({ winner: 'monster' });
                 return;
             }

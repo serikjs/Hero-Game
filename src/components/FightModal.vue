@@ -9,17 +9,18 @@
         </div>
         <div class="fighter monster" :class="{ 'hit': monsterHit }">
           <img :src="monsterIcon" alt="Monster" />
-          <p>HP: {{ monsterHp }}</p>
+          <p>HP: {{ monsterHp > 0 ? monsterHp : 0 }}</p>
         </div>
       </div>
-      <p v-if="fightResult">{{ fightResult }}</p>
-      <button v-if="fightResult" @click="close">Закрыть</button>
+      <p v-if="fightStore.getFightResult">{{ fightStore.getFightResult }}</p>
+      <button v-if="fightStore.getFightResult" @click="close">Закрыть</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch} from 'vue';
+import {useFightStore} from "@/store/FightStore.ts";
 
 defineProps<{
   isVisible: boolean;
@@ -34,7 +35,7 @@ const emit = defineEmits<{
 
 const playerHit = ref(false);
 const monsterHit = ref(false);
-const fightResult = ref<string | null>(null);
+const fightStore = useFightStore();
 
 // Анимация удара
 watch(playerHit, (newVal) => {
@@ -44,16 +45,11 @@ watch(monsterHit, (newVal) => {
   if (newVal) setTimeout(() => {monsterHit.value = false}, 500);
 });
 
-function setResult(result: string) {
-  fightResult.value = result;
-}
-
 function close() {
   emit('close');
 }
 
 defineExpose({
-  setResult,
   triggerPlayerHit: () => (playerHit.value = true),
   triggerMonsterHit: () => (monsterHit.value = true),
 });

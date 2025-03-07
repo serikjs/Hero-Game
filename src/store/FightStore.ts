@@ -28,6 +28,7 @@ export const useFightStore = defineStore('fight', () => {
     const endFight = ()=>{
         isFighting.value = false;
         currentMonster.value = null;
+        fightResult.value = null;
     }
 
     return {
