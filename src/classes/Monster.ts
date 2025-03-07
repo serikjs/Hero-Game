@@ -1,13 +1,13 @@
 import type {MonsterOptions} from "@/typespaces/types/Monster.ts";
 import {Tile} from "@/classes/Tile.ts";
 import type {DisplayData} from "@/typespaces/types/Tile.ts";
-import type {Item} from "@/typespaces/types/ItemInventory.ts";
+import type {InventoryItem} from "@/classes/InventoryItem.ts";
 
 export abstract class Monster extends Tile {
     public monsterType: string;
     public hp: number;
     public attack: number;
-    protected lootTable: { item: Item; chance: number }[];
+    protected lootTable: { item: InventoryItem; chance: number }[];
 
     protected constructor({ type = 'generic', hp = 10, attack = 5, lootTable = [] }: MonsterOptions = {}) {
         super({ type: 'grass', passable: true, description: `Монстр: ${type}` }); // Монстры стоят на траве
@@ -17,7 +17,7 @@ export abstract class Monster extends Tile {
         this.lootTable = lootTable;
     }
 
-    public takeDamage(damage: number): {isDie:boolean, loot: Item | null} | null{
+    public takeDamage(damage: number): {isDie:boolean, loot: InventoryItem | null} | null{
         this.hp -= damage;
         if (this.hp <= 0) return this.die();
         return null;
@@ -28,8 +28,8 @@ export abstract class Monster extends Tile {
         return this.attack;
     }
 
-    public die(): {isDie:boolean, loot: Item | null} {
-        let loot: Item | null = null;
+    public die(): {isDie:boolean, loot: InventoryItem | null} {
+        let loot: InventoryItem | null = null;
         if(this.hp <= 0){
             const roll = Math.random();
             let cumulativeChance = 0;

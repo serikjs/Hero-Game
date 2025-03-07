@@ -28,14 +28,12 @@
         @close="fightStore.endFight()"
         ref="fightModal"
     />
-    <div class="inventory">
-      <h3>Инвентарь</h3>
-      <ul>
-        <li v-for="item in playerAdapter.getPlayer().getInventory()" :key="item.id">
-          {{ item.name }} ({{ item.type }}) {{ item.quantity && item.quantity > 1 ? `x${item.quantity}` : '' }}
-        </li>
-      </ul>
-    </div>
+    <button class="inventory-button" @click="isInventoryOpen = true">Инвентарь</button>
+    <InventoryModal
+        :is-visible="isInventoryOpen"
+        :player="playerAdapter.getPlayer()"
+        @close="isInventoryOpen = false"
+    />
   </div>
 </template>
 
@@ -47,11 +45,13 @@ import {PlayerAdapter} from "@/adapters/playerAdapter.ts";
 import {MapAdapter} from "@/adapters/mapAdapter.ts";
 import FightModal from "@/components/FightModal.vue";
 import {useFightStore} from "@/store/FightStore.ts";
+import InventoryModal from "@/components/InventoryModal.vue";
 
 const mapAdapter = new MapAdapter();
 const playerAdapter = new PlayerAdapter();
 const fightStore = useFightStore();
 const fightModal = ref<InstanceType<typeof FightModal> | null>(null);
+const isInventoryOpen = ref(false);
 
 // Стили сетки
 const gridStyle = computed(() => ({

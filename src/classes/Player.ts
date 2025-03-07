@@ -3,19 +3,22 @@ import type {PlayerOptions} from "@/typespaces/types/Player.ts";
 import {Map} from "@/classes/Map.ts";
 import {Door} from "@/classes/Door.ts";
 import {Monster} from "@/classes/Monster.ts";
-import type {Item} from "@/typespaces/types/ItemInventory.ts";
 import {useInventoryStore} from "@/store/InventoryStore.ts";
+import {InventoryItem, Weapon} from "@/classes/InventoryItem.ts";
 
 export class ThePlayer {
     public position: Positions;
     public attack: number;
     public hp: number;
-    private inventory: Item[]  = useInventoryStore().getItems;
+    public maxHp: number;
+    public equippedWeapon: Weapon | null = null;
+    private inventory: InventoryItem[]  = useInventoryStore().getItems;
 
     constructor({position, attack = 10, hp = 100}: PlayerOptions) {
         this.position = position;
         this.attack = attack;
         this.hp = hp;
+        this.maxHp = hp;
     }
 
     // Проверка валидности хода
@@ -52,14 +55,32 @@ export class ThePlayer {
         return null
     }
 
-    public getInventory():Item[]{
+    public getInventory():InventoryItem[]{
         return this.inventory;
+    }
+
+    // Экипировка предмета
+    public equip(item: InventoryItem): void {
+        if (item instanceof Weapon) this.equippedWeapon = item;
+        // if (item instanceof Armor) this.equippedArmor = item;
+    }
+
+    // Использование предмета
+    public useItem(item: InventoryItem): void {
+        // if (item instanceof Potion) {
+        //     this.hp = Math.min(this.hp + item.healAmount, this.maxHp); // Не превышаем максимум
+        //     this.inventoryStore.removeItem(item.id); // Удаляем зелье после использования
+        // } else {
+        //     this.equip(item); // Если не зелье, пытаемся экипировать
+        // }
+
+        this.equip(item);
     }
 
 
     // Нанести урон
     public dealDamage(): number {
-        return this.attack;
+        return this.attack + (this.equippedWeapon?.damageBonus || 0);
     }
 
 
@@ -67,6 +88,15 @@ export class ThePlayer {
     public takeDamage(damage: number): void {
         this.hp -= damage;
         if (this.hp < 0) this.hp = 0;
+    }
+
+    // Получение текущих статов
+    public getStats(): { hp: number; maxHp: number; attack: number } {
+        return {
+            hp: this.hp,
+            maxHp: this.maxHp,
+            attack: this.dealDamage(),
+        };
     }
 
     // Смерть

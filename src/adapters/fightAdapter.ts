@@ -1,12 +1,12 @@
 import { ThePlayer } from '@/classes/Player.ts';
 
 import { Monster } from '@/classes/Monster.ts';
-import type {Item} from "@/typespaces/types/ItemInventory.ts";
+import type {InventoryItem} from "@/classes/InventoryItem.ts";
 
 export class FightAdapter {
     private player: ThePlayer;
     private monster: Monster;
-    private resolveFight: ((result: { winner: 'player' | 'monster'; loot?: Item }) => void) | null = null;
+    private resolveFight: ((result: { winner: 'player' | 'monster'; loot?: InventoryItem }) => void) | null = null;
 
     constructor(player: ThePlayer, monster: Monster) {
         this.player = player;
@@ -14,7 +14,7 @@ export class FightAdapter {
     }
 
     // Запуск боя
-    async startFight(modal: any): Promise<{ winner: 'player' | 'monster'; loot?: Item }> {
+    async startFight(modal: any): Promise<{ winner: 'player' | 'monster'; loot?: InventoryItem }> {
         return new Promise((resolve) => {
             this.resolveFight = resolve;
 

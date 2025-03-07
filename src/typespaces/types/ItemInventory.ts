@@ -1,5 +1,5 @@
 // src/game/types.ts
-export interface Item {
+export interface InventoryItemType {
     id: string;       // Уникальный идентификатор предмета
     name: string;     // Название предмета
     type: string;     // Тип предмета (weapon, armor, potion, currency и т.д.)

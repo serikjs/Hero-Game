@@ -1,22 +1,20 @@
 // src/stores/inventoryStore.ts
 import { defineStore } from 'pinia';
 import {computed, ref} from 'vue';
-import type {Item} from "@/typespaces/types/ItemInventory.ts";
+import type {InventoryItem} from "@/classes/InventoryItem.ts";
 
 export const useInventoryStore = defineStore('inventory', () => {
-    const items = ref<Item[]>([]);
+    const items = ref<InventoryItem[]>([]);
 
     const getItems = computed(() => items.value)
 
     // Добавление предмета в инвентарь
-    const addItem = (item: Item)=>{
+    function addItem(item: InventoryItem) {
         const existingItem = items.value.find(i => i.id === item.id && i.type === item.type);
         if (existingItem && item.quantity !== undefined) {
-            // Если предмет стековый, увеличиваем количество
             existingItem.quantity = (existingItem.quantity || 0) + (item.quantity || 1);
         } else {
-            // Добавляем новый предмет
-            items.value.push({ ...item, quantity: item.quantity || 1 });
+            items.value.push(item);
         }
     }
     // Удаление предмета из инвентаря
